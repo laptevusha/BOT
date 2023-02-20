@@ -1,4 +1,4 @@
-﻿aiogram==2.13
+aiogram==2.13
 aiohttp==3.7.4.post0
 altgraph==0.17
 async-timeout==3.0.1
@@ -41,4 +41,3 @@ yarl==1.6.3
 zipp==3.4.1
 zope.event==4.5.0
 zope.interface==5.4.0
-gevent==22.10.3
