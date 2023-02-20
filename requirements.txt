@@ -1,2 +1,2 @@
-pyTelegramBotAPI==3.8.2
+pyTelegramBotAPI==4.0.0
 telebot==0.0.3
