@@ -1,40 +1,25 @@
-import telebot
-import datetime
+import os
+from flask import Flask, request
+import telegram
 
-# Задаем токен бота, который вы получили от BotFather
-TOKEN = '6186334339:AAH0PNwLuzTMJlHvTEa496HGKDrwp8iMdMQ'
+TOKEN = os.environ['TELEGRAM_TOKEN']
+bot = telegram.Bot(TOKEN)
 
-# Создаем объект бота
-bot = telebot.TeleBot(TOKEN)
+app = Flask(__name__)
 
-# Создаем обработчик команды '/start'
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.reply_to(message, "Привет! Я могу вычислить разницу между двумя датами и проверить, является ли она больше двух третьих. Просто отправь мне две даты в формате ДД.ММ.ГГГГ через пробел.")
+@app.route('/{}'.format(TOKEN), methods=['POST'])
+def respond():
+    # получаем сообщение от пользователя
+    update = telegram.Update.de_json(request.get_json(force=True), bot)
 
-# Создаем обработчик сообщений с двумя датами
-@bot.message_handler(func=lambda message: len(message.text.split()) == 2)
-def calculate_diff(message):
-    # Разбиваем сообщение на две даты
-    date_strings = message.text.split()
-    try:
-        date1 = datetime.datetime.strptime(date_strings[0], '%d.%m.%Y')
-        date2 = datetime.datetime.strptime(date_strings[1], '%d.%m.%Y')
-    except ValueError:
-        bot.reply_to(message, "Неправильный формат даты. Используйте формат ДД.ММ.ГГГГ.")
-        return
+    # получаем id чата и текст сообщения
+    chat_id = update.message.chat_id
+    text = update.message.text
 
-    # Вычисляем разницу между датами
-    date_diff = abs(date2 - date1).days
+    # отправляем ответ пользователю
+    bot.send_message(chat_id=chat_id, text=text)
 
-    # Вычисляем две третьих от разницы дат
-    two_thirds_diff = date_diff * (2 / 3)
+    return 'ok'
 
-    # Проверяем, является ли разница больше двух третьих
-    if date_diff > two_thirds_diff:
-        bot.reply_to(message, f"Разница между датами равна {date_diff} дням, что больше чем две третьих от разницы. Принимай!")
-    else:
-        bot.reply_to(message, f"Разница между датами равна {date_diff} дням, что меньше чем две третьих от разницы. Не принимай.")
-
-# Запускаем бота
-bot.polling()
+if __name__ == '__main__':
+    app.run()
