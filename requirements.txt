@@ -1,4 +1,2 @@
-python-telegram-bot==13.7
-pyTelegramBotAPI==3.7.7
-telebot==0.0.4
-datetime
+pyTelegramBotAPI
+flask
